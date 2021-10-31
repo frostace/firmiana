@@ -38,6 +38,14 @@ class Service {
             data: params,
         });
     }
+
+    deleteSingleEstate(params: any, config?: any) {
+        const { id } = params;
+        return axios({
+            method: 'delete',
+            url: `${this.url}/${id}`,
+        });
+    }
 }
 
 export default new Service();

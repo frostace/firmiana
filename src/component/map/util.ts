@@ -1,12 +1,10 @@
 import { ProvinceLayer } from '@antv/l7-district';
 import { Scene, PointLayer } from '@antv/l7';
 
-import { InfoDrawerTrigger } from '../info-drawer/trigger';
 import { InfoDrawerField } from '../info-drawer';
-import estateService from '../../service/estate';
 
 export const addProvinceLayer = (scene: Scene) => {
-    new ProvinceLayer(scene, {
+    return new ProvinceLayer(scene, {
         joinBy: ['adcode', 'code'],
         adcode: ['310000'],
         depth: 3,
@@ -49,16 +47,7 @@ export const addPointLayer = (scene: Scene, data: any): PointLayer => {
         .shape('marker')
         .size(12);
     pointLayer.select(true);
-    pointLayer.on('click', async (e) => {
-        const { data: thisEstateFeatures } =
-            await estateService.getSingleEstate({
-                id: e?.feature?.id,
-            });
-        InfoDrawerTrigger.emit('OPEN', {
-            mode: 'edit',
-            data: formatFeatures(thisEstateFeatures as any),
-        });
-    });
+
     scene.addLayer(pointLayer);
 
     return pointLayer as any;

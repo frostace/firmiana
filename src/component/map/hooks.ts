@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from 'react';
-import { Scene } from '@antv/l7';
+import { Scene, PointLayer } from '@antv/l7';
+import { ProvinceLayer } from '@antv/l7-district';
 import { GaodeMap } from '@antv/l7-maps';
 import AMapLoader from '@amap/amap-jsapi-loader';
+
+import { addPointLayer, addProvinceLayer } from './util';
+import estateService from '../../service/estate';
 
 export const useInitMap = () => {
     const [loaded, setLoaded] = useState(false);
@@ -39,4 +43,25 @@ export const useInitMap = () => {
         loaded,
         mapScene,
     };
+};
+
+export const useInitLayers = (mapScene: React.RefObject<Scene>) => {
+    const [loaded, setLoaded] = useState(false);
+    const pointLayer = useRef<PointLayer>();
+    const provinceLayer = useRef<ProvinceLayer>();
+
+    useEffect(() => {
+        const initLayers = async () => {
+            const { data } = await estateService.getAllEstates();
+            pointLayer.current = addPointLayer(mapScene.current!, data);
+            provinceLayer.current = addProvinceLayer(mapScene.current!);
+            setLoaded(true);
+        };
+        mapScene.current?.on('loaded', initLayers);
+        return () => {
+            mapScene.current?.off('loaded', initLayers);
+        };
+    });
+
+    return { pointLayer, provinceLayer, layerLoaded: loaded };
 };

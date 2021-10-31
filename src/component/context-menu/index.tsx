@@ -4,6 +4,7 @@ import { Button } from 'antd';
 interface MenuConfig {
     name: string;
     onClick: (v?: any) => void;
+    hidden?: boolean;
 }
 
 interface ContextMenuProps {
@@ -23,6 +24,7 @@ const ContextMenu: FC<ContextMenuProps> = (props) => {
                     type="text"
                     key={menuConfig.name}
                     onClick={menuConfig.onClick}
+                    hidden={menuConfig?.hidden}
                 >
                     {menuConfig.name}
                 </Button>
