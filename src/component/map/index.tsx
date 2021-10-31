@@ -1,4 +1,5 @@
-import React, { FC, useEffect, useState } from 'react';
+import React, { FC, useEffect, useState, useRef } from 'react';
+import { PointLayer } from '@antv/l7-layers';
 
 import { addPointLayer, addProvinceLayer, formatFeatures } from './util';
 import { ContextMenu } from '..';
@@ -7,22 +8,27 @@ import { InfoDrawerTrigger } from '../info-drawer/trigger';
 import { newEstateTemplate } from './constants';
 import { useInitMap } from './hooks';
 import { ClickPosition } from './interface';
+import { MapTrigger } from './trigger';
 
 const Map: FC = (props) => {
     const [clickPos, setClickPos] = useState<ClickPosition>({});
     const { mapScene, loaded } = useInitMap();
+    const pointLayer = useRef<PointLayer>();
     useEffect(() => {
         // edge case:
         if (!loaded || !mapScene.current) {
             return;
         }
+        const handleOnRefresh = async () => {
+            const { data } = await estateService.getAllEstates();
+            pointLayer.current?.setData(data);
+        };
         const handleOnLoad = async () => {
             const { data } = await estateService.getAllEstates();
-            addPointLayer(mapScene.current!, data);
+            pointLayer.current = addPointLayer(mapScene.current!, data);
             addProvinceLayer(mapScene.current!);
         };
         const handleOnRightClick = async (evt: any) => {
-            console.log(evt);
             setClickPos({
                 left: evt?.pixel?.x,
                 top: evt?.pixel?.y,
@@ -34,10 +40,12 @@ const Map: FC = (props) => {
             setClickPos({});
         };
 
+        MapTrigger.on('REFRESH', handleOnRefresh);
         mapScene.current.on('loaded', handleOnLoad);
         mapScene.current.on('contextmenu', handleOnRightClick);
         mapScene.current.on('click', handleOnClick);
         return () => {
+            MapTrigger.off('REFRESH', handleOnRefresh);
             mapScene.current?.off('loaded', handleOnLoad);
             mapScene.current?.off('contextmenu', handleOnRightClick);
             mapScene.current?.off('click', handleOnClick);
@@ -45,7 +53,6 @@ const Map: FC = (props) => {
     }, [loaded]);
 
     const handleCreateEstate = (params: any) => {
-        console.log(params);
         InfoDrawerTrigger.emit('OPEN', {
             mode: 'create',
             data: formatFeatures(

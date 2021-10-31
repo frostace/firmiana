@@ -29,11 +29,15 @@ export const addProvinceLayer = (scene: Scene) => {
     });
 };
 
-export const addPointLayer = (scene: Scene, data: any) => {
-    scene.addImage(
-        'marker',
-        'https://gw.alipayobjects.com/mdn/antv_site/afts/img/A*BJ6cTpDcuLcAAAAAAAAAAABkARQnAQ'
-    );
+export const addPointLayer = (scene: Scene, data: any): PointLayer => {
+    try {
+        scene.addImage(
+            'marker',
+            'https://gw.alipayobjects.com/mdn/antv_site/afts/img/A*BJ6cTpDcuLcAAAAAAAAAAABkARQnAQ'
+        );
+    } catch (e) {
+        console.log('already registered marker icon');
+    }
     const pointLayer = new PointLayer()
         .source(data, {
             parser: {
@@ -56,14 +60,16 @@ export const addPointLayer = (scene: Scene, data: any) => {
         });
     });
     scene.addLayer(pointLayer);
+
+    return pointLayer as any;
 };
 
 export interface PlaceFeature {
     mode: 'create' | 'edit';
     id?: string;
     name?: string;
-    longitude?: number;
-    latitude?: number;
+    longitude: number;
+    latitude: number;
     unit_price?: number;
     count?: number;
     [other: string]: any;

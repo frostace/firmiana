@@ -9,6 +9,7 @@ import { getInitialValues } from './util';
 import { featureFieldBlackList } from '../../constants';
 
 import './index.css';
+import { MapTrigger } from '../map/trigger';
 
 export interface InfoDrawerField {
     field: string;
@@ -73,6 +74,7 @@ const InfoDrawer: FC = (props) => {
                         await estateService.putEditEstate(formData);
                     }
                     InfoDrawerTrigger.emit('CLOSE');
+                    MapTrigger.emit('REFRESH');
                 }}
             >
                 确定
