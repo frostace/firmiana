@@ -4,4 +4,5 @@ export const featureFieldBlackList = [
     'longitude',
     'latitude',
     'coordinates',
+    'mode',
 ];

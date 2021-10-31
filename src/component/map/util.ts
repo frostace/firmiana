@@ -51,6 +51,7 @@ export const addPointLayer = (scene: Scene, data: any) => {
                 id: e?.feature?.id,
             });
         InfoDrawerTrigger.emit('OPEN', {
+            mode: 'edit',
             data: formatFeatures(thisEstateFeatures as any),
         });
     });
@@ -58,19 +59,19 @@ export const addPointLayer = (scene: Scene, data: any) => {
 };
 
 export interface PlaceFeature {
-    id: string;
+    id?: string;
     name: string;
     longitude: number;
     latitude: number;
     unit_price: number;
-    count: number;
+    count?: number;
     [other: string]: any;
 }
 
-const formatFeatures = (features: PlaceFeature) => {
+export const formatFeatures = (features: PlaceFeature) => {
     // edge case
     if (!features) {
-        return {};
+        return [];
     }
     return Object.entries(features).reduce((result, [field, value]) => {
         result.push({

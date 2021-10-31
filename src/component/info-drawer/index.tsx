@@ -1,13 +1,14 @@
 import React, { FC, useEffect, useState } from 'react';
 import { Drawer, Form, Button } from 'antd';
+import { omit } from 'lodash-es';
 
 import { InfoDrawerTrigger } from './trigger';
 import { XComponent } from '../index';
 import estateService from '../../service/estate';
 import { getInitialValues } from './util';
+import { featureFieldBlackList } from '../../constants';
 
 import './index.css';
-import { featureFieldBlackList } from '../../constants';
 
 export interface InfoDrawerField {
     field: string;
@@ -64,7 +65,13 @@ const InfoDrawer: FC = (props) => {
             <Button
                 onClick={async () => {
                     const formData = form.getFieldsValue();
-                    await estateService.putEditEstate(formData);
+                    if (formData?.mode === 'create') {
+                        await estateService.postCreateNewEstate(
+                            omit(formData, ['mode', 'id'])
+                        );
+                    } else {
+                        await estateService.putEditEstate(formData);
+                    }
                     InfoDrawerTrigger.emit('CLOSE');
                 }}
             >
