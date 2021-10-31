@@ -73685,7 +73685,7 @@ var __rest = (undefined && undefined.__rest) || function (s, e) {
 
 var Service = /** @class */ (function () {
     function Service() {
-        this.url = 'http://47.98.224.122:8888/places';
+        this.url = '//hcyjttq.cn:8888/places';
     }
     Service.prototype.getAllEstates = function () {
         return axios_default()({

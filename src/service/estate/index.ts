@@ -4,7 +4,7 @@ class Service {
     url: string;
 
     constructor() {
-        this.url = 'http://47.98.224.122:8888/places';
+        this.url = '//hcyjttq.cn:8888/places';
     }
 
     getAllEstates() {
