@@ -6,9 +6,10 @@ import estateService from '../../service/estate';
 import { InfoDrawerTrigger } from '../info-drawer/trigger';
 import { newEstateTemplate } from './constants';
 import { useInitMap } from './hooks';
+import { ClickPosition } from './interface';
 
 const Map: FC = (props) => {
-    const [leftTop, setLeftTop] = useState<number[]>([]);
+    const [clickPos, setClickPos] = useState<ClickPosition>({});
     const { mapScene, loaded } = useInitMap();
     useEffect(() => {
         // edge case:
@@ -21,10 +22,16 @@ const Map: FC = (props) => {
             addProvinceLayer(mapScene.current!);
         };
         const handleOnRightClick = async (evt: any) => {
-            setLeftTop([evt?.pixel?.x, evt?.pixel?.y]);
+            console.log(evt);
+            setClickPos({
+                left: evt?.pixel?.x,
+                top: evt?.pixel?.y,
+                longitude: evt?.lnglat?.lng,
+                latitude: evt?.lnglat?.lat,
+            });
         };
         const handleOnClick = () => {
-            setLeftTop([]);
+            setClickPos({});
         };
 
         mapScene.current.on('loaded', handleOnLoad);
@@ -37,21 +44,27 @@ const Map: FC = (props) => {
         };
     }, [loaded]);
 
-    const handleCreateEstate = () => {
+    const handleCreateEstate = (params: any) => {
+        console.log(params);
         InfoDrawerTrigger.emit('OPEN', {
             mode: 'create',
-            data: formatFeatures(newEstateTemplate),
+            data: formatFeatures(
+                Object.assign(newEstateTemplate, {
+                    longitude: clickPos?.longitude,
+                    latitude: clickPos?.latitude,
+                })
+            ),
         });
-        setLeftTop([]);
+        setClickPos({});
     };
 
     return (
         <>
             <div id="map"></div>
             <ContextMenu
-                show={!!leftTop?.length}
-                left={leftTop[0]}
-                top={leftTop[1]}
+                show={!!clickPos?.left}
+                left={clickPos?.left!}
+                top={clickPos?.top!}
                 menuConfigs={[{ name: '新增', onClick: handleCreateEstate }]}
             />
         </>

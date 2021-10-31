@@ -59,11 +59,12 @@ export const addPointLayer = (scene: Scene, data: any) => {
 };
 
 export interface PlaceFeature {
+    mode: 'create' | 'edit';
     id?: string;
-    name: string;
-    longitude: number;
-    latitude: number;
-    unit_price: number;
+    name?: string;
+    longitude?: number;
+    latitude?: number;
+    unit_price?: number;
     count?: number;
     [other: string]: any;
 }

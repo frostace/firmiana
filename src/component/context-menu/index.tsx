@@ -3,7 +3,7 @@ import { Button } from 'antd';
 
 interface MenuConfig {
     name: string;
-    onClick: () => void;
+    onClick: (v?: any) => void;
 }
 
 interface ContextMenuProps {
